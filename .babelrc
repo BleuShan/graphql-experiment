@@ -1,0 +1,19 @@
+{
+  "presets": [
+    [
+      "env",
+      {
+        "targets": {
+          "browsers": ["last 2 versions"]
+        },
+        "modules": false,
+        "useBuiltIns": true
+      }
+    ],
+    "stage-0"
+  ],
+  "ignore": [
+    "node_modules"
+  ],
+  "sourceMaps": "inline"
+}
