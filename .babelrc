@@ -4,7 +4,8 @@
       "env",
       {
         "targets": {
-          "browsers": ["last 2 versions"]
+          "browsers": ["last 2 versions"],
+          "node": "current"
         },
         "modules": false,
         "useBuiltIns": true
@@ -12,11 +13,12 @@
     ],
     "stage-0"
   ],
-  "ignore": [
-    "node_modules"
-  ],
   "plugins": [
-    "graphql"
+    [
+      "cycle-hmr", {
+        "exclude": "src/server/**"
+      }
+    ]
   ],
   "sourceMaps": "inline"
 }

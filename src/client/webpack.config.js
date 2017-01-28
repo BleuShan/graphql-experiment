@@ -1,36 +1,30 @@
 const Path = require('path')
 const webpack = require('webpack')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 const WriteFileWebPackPlugin = require('write-file-webpack-plugin')
+const ResourceHintsWebpackPlugin = require('resource-hints-webpack-plugin')
 const sassImportOnce = require('node-sass-import-once')
-const ReloadServerWebpackPlugin = require('reload-server-webpack-plugin')
-const fs = require('fs')
 
 function resolve (...paths) {
-  return Path.resolve(__dirname, ...paths)
+  return Path.resolve(process.cwd(), ...paths)
 }
 function resolveSourceDir (...paths) {
   return resolve('src', ...paths)
 }
 
-let nodeModules = {}
-fs.readdirSync('node_modules').filter((x) => {
-  return ['.bin'].indexOf(x) === -1
-}).forEach((mod) => {
-  nodeModules[mod] = `commonjs ${mod}`
-})
-
 const env = process.env.NODE_ENV
 const isTest = env === 'test'
 const isDeveloppement = isTest || env !== 'prod' || env !== 'production'
 const outputPath = isDeveloppement ? resolve('build') : resolve('dist')
+const port = process.env.PORT || 3000
 
 const entries = {
   commons: [
     resolveSourceDir('polyfills.js'),
     resolveSourceDir('shared', 'index.js')
   ],
-  server: [
-    resolveSourceDir('server', 'index.js')
+  client: [
+    resolveSourceDir('client', 'index.js')
   ]
 }
 
@@ -49,6 +43,13 @@ let plugins = [
     async: true,
     minChunks: 2
   }),
+  new HtmlWebpackPlugin({
+    title: 'Hackathon 2017',
+    template: resolveSourceDir('client', 'index.ejs'),
+    favicon: resolveSourceDir('client', 'favicon.ico'),
+    showErrors: isDeveloppement
+  }),
+  new ResourceHintsWebpackPlugin(),
   new WriteFileWebPackPlugin({
     test: /^((?!hot-update).)*$/
   })
@@ -56,14 +57,13 @@ let plugins = [
 
 if (isDeveloppement) {
   entries.commons = [
+    'webpack-hot-middleware/client',
     ...entries.commons
   ]
   plugins = [
     ...plugins,
     new webpack.NamedModulesPlugin(),
-    new ReloadServerWebpackPlugin({
-      script: resolve('build', 'server.js')
-    })
+    new webpack.HotModuleReplacementPlugin()
   ]
 } else {
   plugins = [
@@ -75,14 +75,12 @@ if (isDeveloppement) {
 const config = {
   devtool: !isDeveloppement ? 'cheap-source-map' : 'cheap-module-eval-source-map',
   entry: entries,
-  target: 'node',
   output: {
     path: outputPath,
     filename: isDeveloppement ? '[name].js' : '[name]-[hash].js',
     chunkFilename: '[id].chunk.js',
     publicPath: '/'
   },
-  externals: nodeModules,
   module: {
     rules: [
       {
