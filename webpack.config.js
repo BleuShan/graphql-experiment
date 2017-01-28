@@ -95,7 +95,16 @@ const config = {
         exclude: /node_modules/
       },
       {
-        test: /\.(graphql|gql)$/,
+        test: /((?!queries?).*)\.(graphql|gql)$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: 'raw-loader'
+          }
+        ]
+      },
+      {
+        test: /((queries?).*)\.(graphql|gql)$/,
         exclude: /node_modules/,
         use: [
           {

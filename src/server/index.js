@@ -1,5 +1,7 @@
 import express from 'express'
 import graphqlHTTP from 'express-graphql'
+import {api} from '../shared/graphql'
+import resolvers from './resolvers'
 
 const env = process.env.NODE_ENV
 const isTest = env === 'test'
@@ -9,7 +11,8 @@ const port = process.env.PORT || 3000
 const server = express()
 
 server.use('/api', graphqlHTTP({
-
+  schema: api(resolvers),
+  graphiql: isDeveloppement
 }))
 
 if (isDeveloppement) {

@@ -1,5 +1,6 @@
 type Person {
-  firstName: string,
-  lastName: string,
-  email: string
+  id: ID!
+  firstName: String
+  lastName: String
+  email: String!
 }
