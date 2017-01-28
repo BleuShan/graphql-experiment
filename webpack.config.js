@@ -20,10 +20,14 @@ const port = process.env.PORT || 8080
 
 const entries = {
   commons: [
-    resolveSourceDir('polyfills.js')
+    resolveSourceDir('polyfills.js'),
+    resolveSourceDir('shared', 'index.js')
   ],
-  main: [
-    resolveSourceDir('main.js')
+  client: [
+    resolveSourceDir('client', 'index.js')
+  ],
+  server: [
+    resolveSourceDir('server', 'index.js')
   ]
 }
 
@@ -44,8 +48,8 @@ let plugins = [
   }),
   new HtmlWebpackPlugin({
     title: require(resolve('package.json')).name,
-    template: resolve('index.ejs'),
-    favicon: resolve('favicon.ico'),
+    template: resolveSourceDir('client', 'index.ejs'),
+    favicon: resolveSourceDir('client', 'favicon.ico'),
     showErrors: isDeveloppement
   }),
   new ResourceHintsWebpackPlugin(),
@@ -80,13 +84,6 @@ const config = {
     filename: isDeveloppement ? '[name].js' : '[name]-[hash].js',
     chunkFilename: '[id].chunk.js',
     publicPath: '/'
-  },
-  devServer: {
-    port,
-    historyApiFallback: true,
-    stats: {
-      colors: true
-    }
   },
   module: {
     rules: [
@@ -132,6 +129,15 @@ const config = {
                 bower: false
               }
             }
+          },
+          {
+            test: /\.(graphql|gql)$/,
+            exclude: /node_modules/,
+            use: [
+              {
+                loader: 'graphql-tag/loader'
+              }
+            ]
           }
         ]
       },

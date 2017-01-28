@@ -15,5 +15,8 @@
   "ignore": [
     "node_modules"
   ],
+  "plugins": [
+    "graphql"
+  ],
   "sourceMaps": "inline"
 }
