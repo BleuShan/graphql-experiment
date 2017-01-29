@@ -1,0 +1,6 @@
+input PersonInput {
+  id: ID
+  firstName: String
+  lastName: String
+  email: String
+}

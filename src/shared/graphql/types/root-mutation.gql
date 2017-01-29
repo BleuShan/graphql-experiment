@@ -1,0 +1,3 @@
+type RootMutation {
+  createPerson(parameter: PersonInput): Person
+}

@@ -34,7 +34,7 @@
   "dependencies": {
     "@cycle/most-adapter": "4.3.0",
     "@cycle/most-run": "4.4.0",
-    "@motorcycle/dom": "7.0.6",
+    "@motorcycle/dom": "6.7.0",
     "apollo-client": "0.8.1",
     "babel-polyfill": "6.22.0",
     "bulma": "0.3.1",
