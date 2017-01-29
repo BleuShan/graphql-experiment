@@ -1,17 +1,20 @@
 # Hackathon 2017
 
 ## About
-Graphql RethinkDb toolkit.
+[GraphQL](http://graphql.org/) [RethinkDb](https://www.rethinkdb.com/) toolkit.
 
-This an rather unfinished Hackathon entry.
+This a rather unfinished Hackathon entry. The idea is to explore the viability of an api
+query language, namely GraphQL, as a Data access layer for open data.
 
 ## What's done
-- A better understanding of Graphql
-- An hot loading
+- A better understanding of [GraphQL](http://graphql.org/)
+- A whole of boilerplate for a web app framework
+- GraphQL Schema definition loading and a basic GraphQL type – Database table mapping
 
-## TO DO
-- Build a UI
-- Allow user stored queries
-- Automatic resolve wiring
-- Real-time subscription queries
-- Auth
+## To Do
+- An UI layer
+- A scalar type collection.
+- Automatic GraphQL query bindings
+- Subscription queries
+- Authentification and authorization
+- Deploy scheme
