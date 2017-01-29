@@ -1,8 +1,8 @@
 export const RootQuery = {
-  person (obj, args, context) {
-    return {
-      id: args.id
-    }
+  person (parentValue, {id}, {database}) {
+    return database.query(table => {
+      return table.get(id)
+    }, {tableName: 'persons'})
   }
 }
 
