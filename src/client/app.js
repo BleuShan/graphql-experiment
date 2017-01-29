@@ -1,11 +1,18 @@
 import {of} from 'most'
-import {main, h1} from '@motorcycle/dom'
-import './main.scss'
+import {div, nav, main, h1} from '@motorcycle/dom'
+import styles from './main.scss'
 
-export function App ({DOM}) {
+export const App = ({DOM}) => {
   return {
-    DOM: of(main([
-      h1('Hello World', {class: {title: true, 'is-1': true}})
+    DOM: of(div([
+      nav('#appbar', {props: {class: {[styles.nav]: true, [styles['has-shadow']]: true}}}, [
+        div(`.${styles.container}`, [
+          h1('', {class: {[styles.title]: true, [styles['is-1']]: true}}, ['Hello World'])
+        ])
+      ]),
+      main(`.${styles.section}`, [
+        div(`.${styles.container}`, {class: {[styles.container]: true}})
+      ])
     ]))
   }
 }

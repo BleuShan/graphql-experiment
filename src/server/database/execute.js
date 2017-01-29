@@ -1,12 +1,14 @@
 import r from 'rethinkdb'
-import {getDatabaseConnection} from './connection'
+import {getDatabaseConnection, getTable} from './connection'
 
-function exec (callback, {tableName, connection}) {
-  const callbackArg = tableName && (tableName !== ' ' || tableName.length > 0) ? r : r.table(tableName, {readMode: 'majority'})
-  return callback(callbackArg).run(connection)
+function exec (callback, options) {
+  const tableName = options.tableName
+  const connection = options.connection
+  const callbackArg = tableName && (tableName !== ' ' || tableName.length > 0) ? getTable(tableName) : r
+  return callback(callbackArg).run(connection, {readMode: 'majority', durability: 'hard'})
 }
 
-export function execute (callback, options = {connection: getDatabaseConnection()}) {
+export function execute (callback, options = {}) {
   if (!options.connection) {
     options.connection = getDatabaseConnection()
   }

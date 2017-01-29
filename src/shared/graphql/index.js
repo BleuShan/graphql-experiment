@@ -1,5 +1,5 @@
 import { makeExecutableSchema } from 'graphql-tools'
-import {typeDefs, scalars} from './types'
+import {typeDefs, scalars, types} from './types'
 
 export const api = (resolvers) => makeExecutableSchema({
   typeDefs,
@@ -8,3 +8,11 @@ export const api = (resolvers) => makeExecutableSchema({
     ...resolvers
   }
 })
+
+export default {
+  schema: {
+    api
+  },
+  scalars,
+  types
+}

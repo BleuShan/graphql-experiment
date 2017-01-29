@@ -9,6 +9,7 @@ const env = process.env.NODE_ENV
 const isTest = env === 'test'
 const isDeveloppement = isTest || env !== 'prod' || env !== 'production'
 const port = process.env.PORT || 3000
+const schema = api(resolvers)
 
 database.connect('hackathon2017').then(connection => {
   connection.server().then((serverInfo) => {
@@ -16,14 +17,6 @@ database.connect('hackathon2017').then(connection => {
   })
 
   const server = express()
-
-  server.use('/api', graphqlHTTP({
-    schema: api(resolvers),
-    graphiql: isDeveloppement,
-    context: {
-      database
-    }
-  }))
 
   if (isDeveloppement) {
     const webpackConfig = require('../client/webpack.config.js')
@@ -42,8 +35,17 @@ database.connect('hackathon2017').then(connection => {
     }))
     server.use(webpackHotMiddleware(compiler))
   }
+  database.createTablesFromSchema(schema).then(() => {
+    server.use('/api', graphqlHTTP({
+      schema,
+      graphiql: isDeveloppement,
+      context: {
+        database
+      }
+    }))
 
-  server.listen(port)
+    server.listen(port)
+  })
 }).catch((error) => {
   console.error('database connection', error)
 })

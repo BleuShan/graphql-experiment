@@ -1,9 +1,11 @@
-import {getDatabaseConnection, connect} from './connection'
+import * as connection from './connection'
 import execute from './execute'
 import table from './table'
+import setup from './setup'
 
 export default {
-  connect,
-  getDatabaseConnection,
-  execute
+  ...connection,
+  ...setup,
+  execute,
+  table
 }

@@ -119,6 +119,7 @@ const config = {
           {
             loader: 'css-loader',
             options: {
+              modules: true,
               sourceMap: isDeveloppement,
               localIdentName: '[name]-[local][hash:base64:5]',
               importLoaders: 2

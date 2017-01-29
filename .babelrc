@@ -15,8 +15,8 @@
   ],
   "plugins": [
     [
-      "cycle-hmr", {
-        "exclude": "**/(server|shared)/**"
+      "cycle-hmr/most", {
+        "exclude": "**/+(server|shared|node_modules)/**"
       }
     ]
   ],
