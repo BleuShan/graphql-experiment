@@ -1,3 +1,6 @@
 type RootMutation {
-  createPerson(parameter: PersonInput): Person
+  createPerson(person: PersonInput!): Person
+  updatePerson(person: PersonInput!): Person
+  createAccount(account: AccountInput): Account
+  updateAccount(account: AccountInput): Account
 }

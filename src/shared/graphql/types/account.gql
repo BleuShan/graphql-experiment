@@ -1,0 +1,13 @@
+type Account implements Entity {
+  id: ID!
+  createdAt: Date!
+  modifiedAt: Date!
+  ownerId: ID!
+  password: String!
+}
+
+input AccountInput {
+  id: ID
+  ownerId: ID!
+  password: String!
+}

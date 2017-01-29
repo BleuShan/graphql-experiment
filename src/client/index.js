@@ -9,6 +9,8 @@ import {
   DatasetModule,
   HeroModule
 } from '@motorcycle/dom'
+import {makeGraphQLDriver} from 'cycle-graphql-driver'
+
 import App from './app'
 
 const drivers = {

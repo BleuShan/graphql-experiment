@@ -6,3 +6,10 @@ type Person implements Entity {
   lastName: String
   email: String!
 }
+
+input PersonInput {
+  id: ID
+  firstName: String
+  lastName: String
+  email: String
+}

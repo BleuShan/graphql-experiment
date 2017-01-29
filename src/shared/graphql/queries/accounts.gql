@@ -1,0 +1,11 @@
+query {
+  persons {
+    id
+    createdAt
+    modifiedAt
+    firstName
+    lastName
+    email
+    account(ownerId: id)
+  }
+}

@@ -1,12 +1,16 @@
 import {graphql, introspectionQuery} from 'graphql'
 import {list, create} from './table'
 
+function shouldCreateTable ({kind, name}, tableList) {
+  return tableList.indexOf(name) === -1 && kind === 'OBJECT' && !/^(__|Root)\w+(Input)?$/.test(name)
+}
+
 export function createTablesFromSchema (schema) {
   return list().then(tableList => graphql(schema, introspectionQuery).then(({data}) => {
-    const tableNames = data.__schema.types.filter(({kind, name}) => kind === 'OBJECT' && !/^(__|Root)\w+/.test(name))
-    .map(({name}) => name).filter(name => tableList.indexOf(name) === -1)
+    const createdTables = data.__schema.types.filter(type => shouldCreateTable(type, tableList))
+    .map(({name}) => create(name))
 
-    return Promise.all(tableNames.map(name => create(name)))
+    return Promise.all(createdTables)
   }))
 }
 

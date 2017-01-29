@@ -1,3 +1,6 @@
 type RootQuery {
+  account(id: ID): Account
+  accountByOwner(ownerId: ID): Account
   person(id: ID): Person
+  persons: [Person]
 }
