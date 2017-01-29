@@ -1,17 +1,18 @@
 import Api from './api.gql'
 import RootQuery from './root-query.gql'
+import Entity from './entity.gql'
 import Person from './person.gql'
+import Date from './date'
 
 export const types = {
   Api,
-  RootQuery,
-  Person
+  Entity,
+  Person,
+  RootQuery
 }
 
-export const typeDefs = [
-  Api,
-  RootQuery,
-  Person
-]
+export const scalars = {
+  Date
+}
 
-export default types
+export const typeDefs = Object.values(types)

@@ -29,8 +29,7 @@
     "style-loader": "0.13.1",
     "webpack": "2.2.0",
     "webpack-dev-middleware": "1.9.0",
-    "webpack-hot-middleware": "2.15.0",
-    "write-file-webpack-plugin": "3.4.2"
+    "webpack-hot-middleware": "2.15.0"
   },
   "dependencies": {
     "@cycle/most-adapter": "4.3.0",
@@ -38,13 +37,16 @@
     "@motorcycle/dom": "7.0.6",
     "apollo-client": "0.8.1",
     "babel-polyfill": "6.22.0",
+    "bulma": "0.3.1",
     "cycle-graphql-driver": "0.4.2",
     "express": "4.14.0",
     "express-graphql": "0.6.2",
+    "font-awesome": "4.7.0",
     "graphql": "0.9.1",
     "graphql-tag": "1.2.3",
     "graphql-tools": "0.9.2",
     "immutable": "3.8.1",
+    "moment": "2.17.1",
     "most": "1.2.1",
     "rethinkdb": "2.3.3",
     "whatwg-fetch": "2.0.2"

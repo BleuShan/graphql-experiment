@@ -1,7 +1,6 @@
 const Path = require('path')
 const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const WriteFileWebPackPlugin = require('write-file-webpack-plugin')
 const ResourceHintsWebpackPlugin = require('resource-hints-webpack-plugin')
 const sassImportOnce = require('node-sass-import-once')
 
@@ -16,7 +15,6 @@ const env = process.env.NODE_ENV
 const isTest = env === 'test'
 const isDeveloppement = isTest || env !== 'prod' || env !== 'production'
 const outputPath = isDeveloppement ? resolve('build') : resolve('dist')
-const port = process.env.PORT || 3000
 
 const entries = {
   commons: [
@@ -50,15 +48,17 @@ let plugins = [
     showErrors: isDeveloppement
   }),
   new ResourceHintsWebpackPlugin(),
-  new WriteFileWebPackPlugin({
-    test: /^((?!hot-update).)*$/
-  })
+  new webpack.IgnorePlugin(/(rx|rxjs|xstream)-adapter/)
 ]
 
 if (isDeveloppement) {
   entries.commons = [
     'webpack-hot-middleware/client',
     ...entries.commons
+  ]
+  entries.client = [
+    'webpack-hot-middleware/client',
+    ...entries.client
   ]
   plugins = [
     ...plugins,
@@ -119,7 +119,6 @@ const config = {
           {
             loader: 'css-loader',
             options: {
-              modules: true,
               sourceMap: isDeveloppement,
               localIdentName: '[name]-[local][hash:base64:5]',
               importLoaders: 2

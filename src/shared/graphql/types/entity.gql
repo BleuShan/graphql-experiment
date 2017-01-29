@@ -1,0 +1,7 @@
+scalar Date
+
+interface Entity {
+  id: ID!
+  createdAt: Date!
+  modifiedAt: Date!
+}

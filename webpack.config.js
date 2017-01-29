@@ -1,6 +1,5 @@
 const Path = require('path')
 const webpack = require('webpack')
-const WriteFileWebPackPlugin = require('write-file-webpack-plugin')
 const sassImportOnce = require('node-sass-import-once')
 const ReloadServerWebpackPlugin = require('reload-server-webpack-plugin')
 const fs = require('fs')
@@ -12,11 +11,11 @@ function resolveSourceDir (...paths) {
   return resolve('src', ...paths)
 }
 
-let nodeModules = {}
+const externals = {}
 fs.readdirSync('node_modules').filter((x) => {
   return ['.bin'].indexOf(x) === -1
 }).forEach((mod) => {
-  nodeModules[mod] = `commonjs ${mod}`
+  externals[mod] = `commonjs ${mod}`
 })
 
 const env = process.env.NODE_ENV
@@ -25,10 +24,6 @@ const isDeveloppement = isTest || env !== 'prod' || env !== 'production'
 const outputPath = isDeveloppement ? resolve('build') : resolve('dist')
 
 const entries = {
-  commons: [
-    resolveSourceDir('polyfills.js'),
-    resolveSourceDir('shared', 'index.js')
-  ],
   server: [
     resolveSourceDir('server', 'index.js')
   ]
@@ -48,16 +43,10 @@ let plugins = [
     children: true,
     async: true,
     minChunks: 2
-  }),
-  new WriteFileWebPackPlugin({
-    test: /^((?!hot-update).)*$/
   })
 ]
 
 if (isDeveloppement) {
-  entries.commons = [
-    ...entries.commons
-  ]
   plugins = [
     ...plugins,
     new webpack.NamedModulesPlugin(),
@@ -82,7 +71,7 @@ const config = {
     chunkFilename: '[id].chunk.js',
     publicPath: '/'
   },
-  externals: nodeModules,
+  externals,
   module: {
     rules: [
       {

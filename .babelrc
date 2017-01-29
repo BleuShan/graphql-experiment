@@ -16,7 +16,7 @@
   "plugins": [
     [
       "cycle-hmr", {
-        "exclude": "src/server/**"
+        "exclude": "**/(server|shared)/**"
       }
     ]
   ],

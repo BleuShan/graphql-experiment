@@ -1,3 +1,4 @@
+import '../polyfills'
 import express from 'express'
 import graphqlHTTP from 'express-graphql'
 import {api} from '../shared/graphql'
@@ -17,23 +18,20 @@ server.use('/api', graphqlHTTP({
 
 if (isDeveloppement) {
   const webpackConfig = require('../client/webpack.config.js')
+  webpackConfig.output.path = '/'
   const webpack = require('webpack')
   const webpackDevMiddleware = require('webpack-dev-middleware')
   const webpackHotMiddleware = require('webpack-hot-middleware')
   const compiler = webpack(webpackConfig)
   server.use(webpackDevMiddleware(compiler, {
+    lazy: false,
+    noInfo: true,
     stats: {
       colors: true
     },
-    publicPath: webpackConfig.output.publicPath,
-    watchOptions: {
-      aggregateTimeout: 300,
-      poll: true
-    }
+    publicPath: webpackConfig.output.publicPath
   }))
-  server.use(webpackHotMiddleware(compiler, {
-    reload: true
-  }))
+  server.use(webpackHotMiddleware(compiler))
 }
 
 server.listen(port)

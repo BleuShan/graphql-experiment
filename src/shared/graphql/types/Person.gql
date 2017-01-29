@@ -1,5 +1,7 @@
-type Person {
+type Person implements Entity {
   id: ID!
+  createdAt: Date!
+  modifiedAt: Date!
   firstName: String
   lastName: String
   email: String!
