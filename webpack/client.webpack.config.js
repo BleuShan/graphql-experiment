@@ -7,7 +7,7 @@ const ResourceHintsWebpackPlugin = require('resource-hints-webpack-plugin')
 const config = {
   entry: {
     client: [
-      resolveSourceDir('client', 'index.js')
+      resolveSourceDir('main.js')
     ]
   },
   plugins: [

@@ -1,4 +1,3 @@
-import {run} from '@cycle/most-run'
 import {
   makeDomDriver,
   IsolateModule,
@@ -11,9 +10,7 @@ import {
 } from '@motorcycle/dom'
 import {makeGraphQLDriver} from 'cycle-graphql-driver'
 
-import App from './app'
-
-const drivers = {
+export const drivers = {
   DOM: makeDomDriver(document.querySelector('#app'), {
     modules: [
       IsolateModule,
@@ -27,4 +24,4 @@ const drivers = {
   })
 }
 
-run(App, drivers)
+export default drivers

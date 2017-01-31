@@ -2,7 +2,7 @@ import {of} from 'most'
 import {div, nav, main, h3, span, input} from '@motorcycle/dom'
 import styles from './main.scss'
 
-export const App = ({DOM}) => {
+export const Main = ({DOM}) => {
   return {
     DOM: of(div([
       nav({class: {[styles.nav]: true, [styles['has-shadow']]: true}}, [
@@ -21,4 +21,4 @@ export const App = ({DOM}) => {
   }
 }
 
-export default App
+export default Main

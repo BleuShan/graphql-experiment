@@ -13,7 +13,7 @@ fs.readdirSync('node_modules').filter((x) => {
 const config = {
   entry: {
     server: [
-      resolveSourceDir('server', 'index.js')
+      resolveSourceDir('main.js')
     ]
   },
   externals
