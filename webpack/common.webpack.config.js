@@ -1,29 +1,18 @@
-const Path = require('path')
+const path = require('path')
 const webpack = require('webpack')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const ResourceHintsWebpackPlugin = require('resource-hints-webpack-plugin')
 const sassImportOnce = require('node-sass-import-once')
-
-function resolve (...paths) {
-  return Path.resolve(process.cwd(), ...paths)
-}
-function resolveSourceDir (...paths) {
-  return resolve('src', ...paths)
-}
 
 const env = process.env.NODE_ENV
 const isTest = env === 'test'
 const isDeveloppement = isTest || env !== 'prod' || env !== 'production'
-const outputPath = isDeveloppement ? resolve('build') : resolve('dist')
+const outputPath = isDeveloppement ? path.resolve('build') : path.resolve('dist')
 
-const entries = {
-  commons: [
-    resolveSourceDir('polyfills.js'),
-    resolveSourceDir('shared', 'index.js')
-  ],
-  client: [
-    resolveSourceDir('client', 'index.js')
-  ]
+function resolve (...paths) {
+  return path.resolve(process.cwd(), ...paths)
+}
+
+function resolveSourceDir (...paths) {
+  return resolve('src', ...paths)
 }
 
 let plugins = [
@@ -41,40 +30,17 @@ let plugins = [
     async: true,
     minChunks: 2
   }),
-  new HtmlWebpackPlugin({
-    title: 'Hackathon 2017',
-    template: resolveSourceDir('client', 'index.ejs'),
-    favicon: resolveSourceDir('client', 'favicon.ico'),
-    showErrors: isDeveloppement
-  }),
-  new ResourceHintsWebpackPlugin(),
-  new webpack.IgnorePlugin(/(rx|rxjs|xstream)-adapter/)
+  isDeveloppement ? new webpack.NamedModulesPlugin() : new webpack.HashedModuleIdsPlugin()
 ]
 
-if (isDeveloppement) {
-  entries.commons = [
-    'webpack-hot-middleware/client',
-    ...entries.commons
-  ]
-  entries.client = [
-    'webpack-hot-middleware/client',
-    ...entries.client
-  ]
-  plugins = [
-    ...plugins,
-    new webpack.NamedModulesPlugin(),
-    new webpack.HotModuleReplacementPlugin()
-  ]
-} else {
-  plugins = [
-    ...plugins,
-    new webpack.HashedModuleIdsPlugin()
-  ]
-}
-
-const config = {
+const commonConfig = {
   devtool: !isDeveloppement ? 'cheap-source-map' : 'cheap-module-eval-source-map',
-  entry: entries,
+  entry: {
+    common: [
+      resolveSourceDir('polyfills.js'),
+      resolveSourceDir('shared', 'index.js')
+    ]
+  },
   output: {
     path: outputPath,
     filename: isDeveloppement ? '[name].js' : '[name]-[hash].js',
@@ -193,4 +159,12 @@ const config = {
   }
 }
 
-module.exports = config
+module.exports = {
+  commonConfig,
+  env,
+  isDeveloppement,
+  isTest,
+  outputPath,
+  resolve,
+  resolveSourceDir
+}

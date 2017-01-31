@@ -1,4 +1,3 @@
-import '../polyfills'
 import express from 'express'
 import graphqlHTTP from 'express-graphql'
 import {api} from '../shared/graphql'
@@ -19,8 +18,12 @@ database.connect('hackathon2017').then(connection => {
   const server = express()
 
   if (isDeveloppement) {
-    const webpackConfig = require('../client/webpack.config.js')
+    const webpackConfig = require('../../webpack/client.webpack.config')
     webpackConfig.output.path = '/'
+    Object.keys(webpackConfig.entry).forEach(key => {
+      webpackConfig.entry[key] = webpackConfig.entry[key].map(value => /^\//.test(value) ? `.${value}` : value)
+    })
+
     const webpack = require('webpack')
     const webpackDevMiddleware = require('webpack-dev-middleware')
     const webpackHotMiddleware = require('webpack-hot-middleware')

@@ -1,8 +1,8 @@
 {
-  "name": "Hackathon2017",
+  "name": "graphql-experiment",
   "version": "1.0.0",
-  "description": "Hackathon lib",
-  "repository": "https://github.com/BleuShan/hackthon2017.git",
+  "description": "an experiment in graphql",
+  "repository": "https://github.com/BleuShan/graphql-experiment.git",
   "main": "index.js",
   "author": "Philippe Lafontaine <lafontaine.philippe@gmail.com>",
   "license": "MIT",
@@ -29,7 +29,8 @@
     "style-loader": "0.13.1",
     "webpack": "2.2.0",
     "webpack-dev-middleware": "1.9.0",
-    "webpack-hot-middleware": "2.15.0"
+    "webpack-hot-middleware": "2.15.0",
+    "webpack-merge": "2.6.1"
   },
   "dependencies": {
     "@cycle/most-adapter": "4.3.0",
@@ -39,6 +40,7 @@
     "babel-polyfill": "6.22.0",
     "bulma": "0.3.1",
     "cycle-graphql-driver": "0.4.2",
+    "exenv": "1.2.1",
     "express": "4.14.0",
     "express-graphql": "0.6.2",
     "font-awesome": "4.7.0",

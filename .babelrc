@@ -13,12 +13,14 @@
     ],
     "stage-0"
   ],
-  "plugins": [
-    [
-      "cycle-hmr/most", {
-        "exclude": "**/+(server|shared|node_modules)/**"
-      }
-    ]
-  ],
+  "env": {
+    "development": {
+      "plugins": [
+        ["cycle-hmr", {
+          "include": "src/client/**"
+        }]
+      ]
+    }
+  },
   "sourceMaps": "inline"
 }
