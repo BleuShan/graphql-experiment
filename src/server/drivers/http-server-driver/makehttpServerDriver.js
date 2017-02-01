@@ -6,8 +6,13 @@ export function makeHttpServerDriver (config = {port: 3000}, middleware = {}) {
   const httpServer = http.createServer()
   httpServer.listen(port)
 
-  return function httpServerDriver () {
-    const request$ = fromEvent('request', httpServer)
+  return function httpServerDriver (source$) {
+    const request$ = fromEvent('request', httpServer).map(([request, response]) => {
+      return {
+        request,
+        response
+      }
+    })
     return request$
   }
 }
