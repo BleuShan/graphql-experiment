@@ -1,54 +1,8 @@
-import express from 'express'
-import graphqlHTTP from 'express-graphql'
-import {api} from '../shared/graphql'
-import resolvers from './resolvers'
-import database from './database'
 
-const env = process.env.NODE_ENV
-const isTest = env === 'test'
-const isDeveloppement = isTest || env !== 'prod' || env !== 'production'
-const port = process.env.PORT || 3000
-const schema = api(resolvers)
+export function Main () {
+  return {
 
-database.connect('hackathon2017').then(connection => {
-  connection.server().then((serverInfo) => {
-    console.log('connected to database server:', JSON.stringify(serverInfo.name))
-  })
-
-  const server = express()
-
-  if (isDeveloppement) {
-    const webpackConfig = require('../../webpack/client.webpack.config')
-    webpackConfig.output.path = '/'
-    Object.keys(webpackConfig.entry).forEach(key => {
-      webpackConfig.entry[key] = webpackConfig.entry[key].map(value => /^\//.test(value) ? `.${value}` : value)
-    })
-
-    const webpack = require('webpack')
-    const webpackDevMiddleware = require('webpack-dev-middleware')
-    const webpackHotMiddleware = require('webpack-hot-middleware')
-    const compiler = webpack(webpackConfig)
-    server.use(webpackDevMiddleware(compiler, {
-      lazy: false,
-      noInfo: true,
-      stats: {
-        colors: true
-      },
-      publicPath: webpackConfig.output.publicPath
-    }))
-    server.use(webpackHotMiddleware(compiler))
   }
-  database.createTablesFromSchema(schema).then(() => {
-    server.use('/api', graphqlHTTP({
-      schema,
-      graphiql: isDeveloppement,
-      context: {
-        database
-      }
-    }))
+}
 
-    server.listen(port)
-  })
-}).catch((error) => {
-  console.error('database connection', error)
-})
+export default Main

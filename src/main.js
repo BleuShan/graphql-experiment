@@ -3,7 +3,7 @@ import ExecutionEnvironment from 'exenv'
 
 let drivers
 let main
-if (ExecutionEnvironment.canUseDOM) {
+if (ExecutionEnvironment.canUseDOM && ExecutionEnvironment.canUseViewport) {
   drivers = require('./client/drivers')
   main = require('./client/main.js')
 } else {
