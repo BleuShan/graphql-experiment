@@ -45,7 +45,7 @@ const plugins = [
 ]
 
 const commonConfig = {
-  devtool: !isDeveloppement ? 'cheap-source-map' : 'cheap-module-eval-source-map',
+  devtool: !isDeveloppement ? 'cheap-module-source-map' : 'cheap-eval-module-source-map',
   entry: {
     common: [
       resolveSourceDir('polyfills.js'),
