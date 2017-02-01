@@ -13,8 +13,8 @@ const config = {
   plugins: [
     new HtmlWebpackPlugin({
       title: 'graphql-experiment',
-      template: `.${resolveSourceDir('client', 'index.ejs')}`,
-      favicon: `.${resolveSourceDir('client', 'index.ejs')}`,
+      template: resolveSourceDir('client', 'index.ejs'),
+      favicon: resolveSourceDir('client', 'index.ejs'),
       showErrors: isDeveloppement
     }),
     new ResourceHintsWebpackPlugin(),

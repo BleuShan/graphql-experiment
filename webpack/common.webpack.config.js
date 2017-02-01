@@ -3,19 +3,24 @@ const webpack = require('webpack')
 const sassImportOnce = require('node-sass-import-once')
 
 const env = process.env.NODE_ENV
-const isTest = env === 'test'
-const isDeveloppement = isTest || env !== 'prod' || env !== 'production'
+const isDeveloppement = env !== 'production'
 const outputPath = isDeveloppement ? path.resolve('build') : path.resolve('dist')
 
 function resolve (...paths) {
-  return path.resolve(process.cwd(), ...paths)
+  const cwd = process.cwd()
+
+  if (cwd === '/') {
+    return path.join('.', ...paths)
+  }
+
+  return path.resolve(cwd, ...paths)
 }
 
 function resolveSourceDir (...paths) {
   return resolve('src', ...paths)
 }
 
-let plugins = [
+const plugins = [
   new webpack.NoEmitOnErrorsPlugin(),
   new webpack.optimize.UglifyJsPlugin({
     comments: false,
@@ -29,6 +34,12 @@ let plugins = [
     children: true,
     async: true,
     minChunks: 2
+  }),
+  new webpack.DefinePlugin({
+    ENV: {
+      env,
+      isDeveloppement
+    }
   }),
   isDeveloppement ? new webpack.NamedModulesPlugin() : new webpack.HashedModuleIdsPlugin()
 ]
@@ -163,7 +174,6 @@ module.exports = {
   commonConfig,
   env,
   isDeveloppement,
-  isTest,
   outputPath,
   resolve,
   resolveSourceDir
