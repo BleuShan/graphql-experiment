@@ -50,6 +50,9 @@ const commonConfig = {
     common: [
       resolveSourceDir('polyfills.js'),
       resolveSourceDir('shared', 'index.js')
+    ],
+    app: [
+      resolveSourceDir('main.js')
     ]
   },
   output: {

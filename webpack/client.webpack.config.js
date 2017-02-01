@@ -5,11 +5,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ResourceHintsWebpackPlugin = require('resource-hints-webpack-plugin')
 
 const config = {
-  entry: {
-    client: [
-      resolveSourceDir('main.js')
-    ]
-  },
   plugins: [
     new HtmlWebpackPlugin({
       title: 'graphql-experiment',
@@ -27,7 +22,7 @@ module.exports = isDeveloppement ? merge({
     common: [
       'webpack-hot-middleware/client'
     ],
-    client: [
+    app: [
       'webpack-hot-middleware/client'
     ]
   },

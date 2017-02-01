@@ -1,7 +1,6 @@
-
-export function Main () {
+export function Main ({HTTP}) {
   return {
-
+    HTTP: HTTP.map(...args => console.log(args))
   }
 }
 
