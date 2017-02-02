@@ -1,19 +1,52 @@
-import {fromEvent} from 'most'
 import http from 'http'
+import express from 'express'
 
-export function makeHttpServerDriver (config = {port: 3000}, middleware = {}) {
-  const port = config.port
-  const httpServer = http.createServer()
-  httpServer.listen(port)
+export function makeHttpServerDriver (options = {}) {
+  let {port, middleware} = options
+  const app = express()
+  const server = http.createServer(app)
 
-  return function httpServerDriver (source$) {
-    const request$ = fromEvent('request', httpServer).map(([request, response]) => {
-      return {
-        request,
-        response
-      }
+  if (middleware) {
+    middleware.forEach((item) => {
+      app.use(item)
     })
-    return request$
+  }
+
+  if (!port) {
+    port = process.env.PORT || 3000
+  }
+
+  if (DEBUG) {
+    server.on('listening', () => {
+      console.log(`server started on [${server.address().address}]:${port}`)
+    })
+  }
+
+  server.listen(port)
+
+  return function serverDriver (sink$, streamAdapter) {
+    const {stream} = streamAdapter.makeSubject()
+    app.get('/', (request, response) => {
+      streamAdapter.streamSubscribe(sink$, {
+        next ({status, body}) {
+          if (status) {
+            response.status(status)
+          }
+
+          response.send(body)
+        }
+      })
+      stream.next(request)
+    })
+
+    process.on('exit', () => {
+      stream.complete(() => {
+        console.log('server terminated')
+        return process.exitCode
+      })
+    })
+
+    return streamAdapter.remember(stream)
   }
 }
 
