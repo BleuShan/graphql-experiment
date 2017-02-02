@@ -1,8 +1,8 @@
-import {makeHttpServerDriver} from './http-server-driver'
+import {makeHttpServerDriver} from './http-server'
 
 export const drivers = {
   HTTP: makeHttpServerDriver()
 }
 
-export * from './http-server-driver'
+export * from './http-server'
 export default drivers
