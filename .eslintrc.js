@@ -7,7 +7,8 @@ module.exports = {
     browser: true
   },
   globals: {
-    ENV: true
+    ENV: true,
+    DEBUG: true
   },
   parser: 'babel-eslint',
   plugins: [

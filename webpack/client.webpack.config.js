@@ -1,4 +1,4 @@
-const {commonConfig, isDeveloppement, resolveSourceDir} = require('./common.webpack.config')
+const {commonConfig, DEBUG, resolveSourceDir} = require('./common.webpack.config')
 const merge = require('webpack-merge')
 const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
@@ -10,14 +10,14 @@ const config = {
       title: 'graphql-experiment',
       template: resolveSourceDir('client', 'index.ejs'),
       favicon: resolveSourceDir('client', 'index.ejs'),
-      showErrors: isDeveloppement
+      showErrors: DEBUG
     }),
     new ResourceHintsWebpackPlugin(),
     new webpack.IgnorePlugin(/(rx|rxjs|xstream)-adapter/)
   ]
 }
 
-module.exports = isDeveloppement ? merge({
+module.exports = DEBUG ? merge({
   entry: {
     common: [
       'webpack-hot-middleware/client'

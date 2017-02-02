@@ -2,9 +2,9 @@ const path = require('path')
 const webpack = require('webpack')
 const sassImportOnce = require('node-sass-import-once')
 
-const env = process.env.NODE_ENV
-const isDeveloppement = env !== 'production'
-const outputPath = isDeveloppement ? path.resolve('build') : path.resolve('dist')
+const ENV = process.env.NODE_ENV
+const DEBUG = ENV !== 'production'
+const outputPath = DEBUG ? path.resolve('build') : path.resolve('dist')
 
 function resolve (...paths) {
   const cwd = process.cwd()
@@ -24,11 +24,11 @@ const plugins = [
   new webpack.NoEmitOnErrorsPlugin(),
   new webpack.optimize.UglifyJsPlugin({
     comments: false,
-    sourceMap: isDeveloppement
+    sourceMap: DEBUG
   }),
   new webpack.LoaderOptionsPlugin({
     minimize: true,
-    debug: isDeveloppement
+    debug: DEBUG
   }),
   new webpack.optimize.CommonsChunkPlugin({
     children: true,
@@ -36,16 +36,14 @@ const plugins = [
     minChunks: 2
   }),
   new webpack.DefinePlugin({
-    ENV: {
-      env,
-      isDeveloppement
-    }
+    ENV,
+    DEBUG
   }),
-  isDeveloppement ? new webpack.NamedModulesPlugin() : new webpack.HashedModuleIdsPlugin()
+  DEBUG ? new webpack.NamedModulesPlugin() : new webpack.HashedModuleIdsPlugin()
 ]
 
 const commonConfig = {
-  devtool: !isDeveloppement ? 'cheap-module-source-map' : 'cheap-eval-module-source-map',
+  devtool: !DEBUG ? 'cheap-module-source-map' : 'cheap-eval-module-source-map',
   entry: {
     common: [
       resolveSourceDir('polyfills.js'),
@@ -57,7 +55,7 @@ const commonConfig = {
   },
   output: {
     path: outputPath,
-    filename: isDeveloppement ? '[name].js' : '[name]-[hash].js',
+    filename: DEBUG ? '[name].js' : '[name]-[hash].js',
     chunkFilename: '[id].chunk.js',
     publicPath: '/'
   },
@@ -100,7 +98,7 @@ const commonConfig = {
             loader: 'css-loader',
             options: {
               modules: true,
-              sourceMap: isDeveloppement,
+              sourceMap: DEBUG,
               localIdentName: '[name]-[local][hash:base64:5]',
               importLoaders: 2
             }
@@ -115,7 +113,7 @@ const commonConfig = {
             loader: 'sass-loader',
             options: {
               sourceMap: true,
-              outputStyle: isDeveloppement ? 'compact' : 'compressed',
+              outputStyle: DEBUG ? 'compact' : 'compressed',
               importer: sassImportOnce,
               importOnce: {
                 index: true,
@@ -132,7 +130,7 @@ const commonConfig = {
           {
             loader: 'file-loader',
             options: {
-              name: isDeveloppement ? 'fonts/[name].[ext]' : 'fonts/[name][hash].[ext]'
+              name: DEBUG ? 'fonts/[name].[ext]' : 'fonts/[name][hash].[ext]'
             }
           }
         ]
@@ -145,7 +143,7 @@ const commonConfig = {
             options: {
               hash: 'sha512',
               digest: 'hex',
-              name: isDeveloppement ? 'images/[name].[ext]' : 'images/[name][hash].[ext]'
+              name: DEBUG ? 'images/[name].[ext]' : 'images/[name][hash].[ext]'
             }
           },
           {
@@ -175,8 +173,8 @@ const commonConfig = {
 
 module.exports = {
   commonConfig,
-  env,
-  isDeveloppement,
+  ENV,
+  DEBUG,
   outputPath,
   resolve,
   resolveSourceDir

@@ -1,4 +1,4 @@
-const {commonConfig, resolve, isDeveloppement} = require('./common.webpack.config')
+const {commonConfig, resolve, DEBUG} = require('./common.webpack.config')
 const merge = require('webpack-merge')
 const ReloadServerWebpackPlugin = require('reload-server-webpack-plugin')
 const fs = require('fs')
@@ -15,10 +15,10 @@ const config = {
   externals
 }
 
-module.exports = isDeveloppement ? merge({
+module.exports = DEBUG ? merge({
   plugins: [
     new ReloadServerWebpackPlugin({
-      script: resolve(isDeveloppement ? 'build' : 'dist', 'app.js')
+      script: resolve(DEBUG ? 'build' : 'dist', 'app.js')
     })
   ]
 }, commonConfig, config) : merge(commonConfig, config)
