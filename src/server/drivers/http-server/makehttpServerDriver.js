@@ -6,6 +6,8 @@ export function makeHttpServerDriver (options = {}) {
   const app = express()
   const server = http.createServer(app)
 
+  app.set('x-powered-by', false)
+
   if (middleware) {
     middleware.forEach((item) => {
       app.use(item)
@@ -13,7 +15,7 @@ export function makeHttpServerDriver (options = {}) {
   }
 
   if (!port) {
-    port = process.env.PORT || 3000
+    port = process.env.PORT || 4000
   }
 
   if (DEBUG) {
@@ -26,7 +28,7 @@ export function makeHttpServerDriver (options = {}) {
 
   return function serverDriver (sink$, streamAdapter) {
     const {stream} = streamAdapter.makeSubject()
-    app.get('/', (request, response) => {
+    app.all('/*', (request, response) => {
       streamAdapter.streamSubscribe(sink$, {
         next ({status, body}) {
           if (status) {

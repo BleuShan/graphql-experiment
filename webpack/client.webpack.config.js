@@ -4,17 +4,34 @@ const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ResourceHintsWebpackPlugin = require('resource-hints-webpack-plugin')
 
+const TARGET = 'web'
+
 const config = {
+  entry: {
+    common: [
+      'whatwg-fetch'
+    ],
+    app: [
+      resolveSourceDir('client', 'index.js')
+    ]
+  },
+  output: {
+    filename: DEBUG ? '[name].client.bundle.js' : '[name]-[hash].client.bundle.js',
+    chunkFilename: DEBUG ? '[id].client.chunk.js' : '[id]-[hash].client.chunk.js'
+  },
   plugins: [
     new HtmlWebpackPlugin({
       title: 'graphql-experiment',
       template: resolveSourceDir('client', 'index.ejs'),
-      favicon: resolveSourceDir('client', 'index.ejs'),
+      favicon: resolveSourceDir('client', 'favicon.ico'),
       showErrors: DEBUG
     }),
     new ResourceHintsWebpackPlugin(),
-    new webpack.IgnorePlugin(/(rx|rxjs|xstream)-adapter/)
-  ]
+    new webpack.DefinePlugin({
+      TARGET
+    })
+  ],
+  target: TARGET
 }
 
 module.exports = DEBUG ? merge({
@@ -27,6 +44,7 @@ module.exports = DEBUG ? merge({
     ]
   },
   plugins: [
-    new webpack.HotModuleReplacementPlugin()
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.IgnorePlugin(/(rx|rxjs|xstream)-adapter/)()
   ]
 }, commonConfig, config) : merge(commonConfig, config)

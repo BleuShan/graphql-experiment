@@ -1,8 +1,9 @@
-const {commonConfig, resolve, DEBUG} = require('./common.webpack.config')
+const {commonConfig, resolveSourceDir, DEBUG} = require('./common.webpack.config')
 const merge = require('webpack-merge')
-const ReloadServerWebpackPlugin = require('reload-server-webpack-plugin')
+const webpack = require('webpack')
 const fs = require('fs')
 
+const TARGET = 'node'
 const externals = {}
 fs.readdirSync('node_modules').filter((x) => {
   return ['.bin'].indexOf(x) === -1
@@ -11,14 +12,29 @@ fs.readdirSync('node_modules').filter((x) => {
 })
 
 const config = {
-  target: 'node',
-  externals
+  entry: {
+    app: [
+      resolveSourceDir('server', 'index.js')
+    ]
+  },
+  output: {
+    filename: DEBUG ? '[name].server.bundle.js' : '[name]-[hash].server.bundle.js',
+    chunkFilename: DEBUG ? '[id].server.chunk.js' : '[id]-[hash].server.chunk.js'
+  },
+  externals,
+  plugins: [
+    new webpack.DefinePlugin({TARGET})
+  ],
+  target: TARGET
 }
 
 module.exports = DEBUG ? merge({
-  plugins: [
-    new ReloadServerWebpackPlugin({
-      script: resolve(DEBUG ? 'build' : 'dist', 'app.js')
-    })
-  ]
+  entry: {
+    common: [
+      'webpack/hot/signal'
+    ],
+    app: [
+      'webpack/hot/signal'
+    ]
+  }
 }, commonConfig, config) : merge(commonConfig, config)

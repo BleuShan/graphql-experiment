@@ -1,10 +1,13 @@
 const path = require('path')
 const webpack = require('webpack')
+const merge = require('webpack-merge')
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const sassImportOnce = require('node-sass-import-once')
 
 const ENV = process.env.NODE_ENV
 const DEBUG = ENV !== 'production'
 const outputPath = DEBUG ? path.resolve('build') : path.resolve('dist')
+const publicPath = path.join(outputPath, 'public')
 
 function resolve (...paths) {
   const cwd = process.cwd()
@@ -19,6 +22,37 @@ function resolve (...paths) {
 function resolveSourceDir (...paths) {
   return resolve('src', ...paths)
 }
+
+const styleLoaders = [
+  {
+    loader: 'css-loader',
+    options: {
+      modules: true,
+      sourceMap: DEBUG,
+      localIdentName: '[name]-[local][hash:base64:5]',
+      importLoaders: 2
+    }
+  },
+  {
+    loader: 'postcss-loader'
+  },
+  {
+    loader: 'resolve-url-loader'
+  },
+  {
+    loader: 'sass-loader',
+    options: {
+      sourceMap: true,
+      outputStyle: DEBUG ? 'compact' : 'compressed',
+      importer: sassImportOnce,
+      importOnce: {
+        index: true,
+        css: true,
+        bower: false
+      }
+    }
+  }
+]
 
 const plugins = [
   new webpack.NoEmitOnErrorsPlugin(),
@@ -42,22 +76,17 @@ const plugins = [
   DEBUG ? new webpack.NamedModulesPlugin() : new webpack.HashedModuleIdsPlugin()
 ]
 
-const commonConfig = {
+let commonConfig = {
   devtool: !DEBUG ? 'cheap-module-source-map' : 'cheap-eval-module-source-map',
   entry: {
     common: [
       resolveSourceDir('polyfills.js'),
       resolveSourceDir('shared', 'index.js')
-    ],
-    app: [
-      resolveSourceDir('main.js')
     ]
   },
   output: {
     path: outputPath,
-    filename: DEBUG ? '[name].js' : '[name]-[hash].js',
-    chunkFilename: '[id].chunk.js',
-    publicPath: '/'
+    publicPath: publicPath
   },
   module: {
     rules: [
@@ -90,39 +119,15 @@ const commonConfig = {
       },
       {
         test: /\.((s(c|a))|c)ss$/i,
-        use: [
+        use: DEBUG ? [
           {
             loader: 'style-loader'
           },
-          {
-            loader: 'css-loader',
-            options: {
-              modules: true,
-              sourceMap: DEBUG,
-              localIdentName: '[name]-[local][hash:base64:5]',
-              importLoaders: 2
-            }
-          },
-          {
-            loader: 'postcss-loader'
-          },
-          {
-            loader: 'resolve-url-loader'
-          },
-          {
-            loader: 'sass-loader',
-            options: {
-              sourceMap: true,
-              outputStyle: DEBUG ? 'compact' : 'compressed',
-              importer: sassImportOnce,
-              importOnce: {
-                index: true,
-                css: true,
-                bower: false
-              }
-            }
-          }
-        ]
+          ...styleLoaders
+        ] : ExtractTextPlugin.extract({
+          fallbackLoader: 'style-loader',
+          loader: styleLoaders
+        })
       },
       {
         test: /((fonts?).*)\.(eot|ttf|woff|woff2|svg)$/i,
@@ -165,10 +170,18 @@ const commonConfig = {
       ' ',
       '.js',
       '.css', '.scss', 'sass',
-      '.html', '.ejs',
+      '.html',
       '.json'
     ]
   }
+}
+
+if (!DEBUG) {
+  commonConfig = merge(commonConfig, {
+    plugins: [
+      new ExtractTextPlugin('styles.css')
+    ]
+  })
 }
 
 module.exports = {
@@ -176,6 +189,7 @@ module.exports = {
   ENV,
   DEBUG,
   outputPath,
+  publicPath,
   resolve,
   resolveSourceDir
 }

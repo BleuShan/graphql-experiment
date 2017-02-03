@@ -8,7 +8,8 @@ module.exports = {
   },
   globals: {
     ENV: true,
-    DEBUG: true
+    DEBUG: true,
+    TARGET: true
   },
   parser: 'babel-eslint',
   plugins: [
