@@ -1,55 +1,8 @@
-import http from 'http'
-import express from 'express'
+import {streamSubscribe} from '@cycle/most-adapter'
+import HttpServerSource from './HttpServerSource'
 
-export function makeHttpServerDriver (options = {}) {
-  let {port, middleware} = options
-  const app = express()
-  const server = http.createServer(app)
-
-  app.set('x-powered-by', false)
-
-  if (middleware) {
-    middleware.forEach((item) => {
-      app.use(item)
-    })
-  }
-
-  if (!port) {
-    port = process.env.PORT || 4000
-  }
-
-  if (DEBUG) {
-    server.on('listening', () => {
-      console.log(`server started on [${server.address().address}]:${port}`)
-    })
-  }
-
-  server.listen(port)
-
-  return function serverDriver (sink$, streamAdapter) {
-    const {stream} = streamAdapter.makeSubject()
-    app.all('/*', (request, response) => {
-      streamAdapter.streamSubscribe(sink$, {
-        next ({status, body}) {
-          if (status) {
-            response.status(status)
-          }
-
-          response.send(body)
-        }
-      })
-      stream.next(request)
-    })
-
-    process.on('exit', () => {
-      stream.complete(() => {
-        console.log('server terminated')
-        return process.exitCode
-      })
-    })
-
-    return streamAdapter.remember(stream)
+export default function makeHttpServerDriver (options = {}) {
+  return function httpServerDriver (response$, runSA) {
+    return runSA.adapt(new HttpServerSource(response$, options), streamSubscribe)
   }
 }
-
-export default makeHttpServerDriver
