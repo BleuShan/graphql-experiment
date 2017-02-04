@@ -183,6 +183,12 @@ if (!DEBUG) {
       new ExtractTextPlugin('styles.css')
     ]
   })
+} else {
+  commonConfig = merge(commonConfig, {
+    plugins: [
+      new webpack.HotModuleReplacementPlugin()
+    ]
+  })
 }
 
 module.exports = {

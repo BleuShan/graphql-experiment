@@ -44,7 +44,6 @@ module.exports = DEBUG ? merge({
     ]
   },
   plugins: [
-    new webpack.HotModuleReplacementPlugin(),
     new webpack.IgnorePlugin(/(rx|rxjs|xstream)-adapter/)()
   ]
 }, commonConfig, config) : merge(commonConfig, config)

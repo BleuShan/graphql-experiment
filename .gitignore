@@ -46,5 +46,6 @@ build/Release
 node_modules
 
 # Build output
+webpack/records.json
 build
 dist

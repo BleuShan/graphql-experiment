@@ -25,7 +25,11 @@ const config = {
   plugins: [
     new webpack.DefinePlugin({TARGET})
   ],
-  target: TARGET
+  target: TARGET,
+  node: {
+    __dirname: false,
+    __filename: false
+  }
 }
 
 module.exports = DEBUG ? merge({
