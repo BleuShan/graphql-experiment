@@ -165,6 +165,7 @@ let commonConfig = {
     ]
   },
   plugins: plugins,
+  recordsPath: resolve('webpack', 'records.json'),
   resolve: {
     extensions: [
       ' ',
