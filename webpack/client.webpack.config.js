@@ -9,14 +9,16 @@ const TARGET = 'web'
 const config = {
   entry: {
     common: [
-      'whatwg-fetch'
+      resolveSourceDir('polyfills.js'),
+      'whatwg-fetch',
+      resolveSourceDir('shared', 'index.js')
     ],
     app: [
       resolveSourceDir('client', 'index.js')
     ]
   },
   output: {
-    filename: DEBUG ? '[name].client.bundle.js' : '[name]-[hash].client.bundle.js',
+    filename: DEBUG ? '[name].client.js' : '[name]-[hash].client.js',
     chunkFilename: DEBUG ? '[id].client.chunk.js' : '[id]-[hash].client.chunk.js'
   },
   plugins: [
@@ -44,6 +46,7 @@ module.exports = DEBUG ? merge({
     ]
   },
   plugins: [
-    new webpack.IgnorePlugin(/(rx|rxjs|xstream)-adapter/)()
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.IgnorePlugin(/(rx|rxjs|xstream)-adapter/)
   ]
 }, commonConfig, config) : merge(commonConfig, config)

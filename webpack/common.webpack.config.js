@@ -78,12 +78,6 @@ const plugins = [
 
 let commonConfig = {
   devtool: !DEBUG ? 'cheap-module-source-map' : 'cheap-eval-module-source-map',
-  entry: {
-    common: [
-      resolveSourceDir('polyfills.js'),
-      resolveSourceDir('shared', 'index.js')
-    ]
-  },
   output: {
     path: outputPath,
     publicPath: publicPath
@@ -181,12 +175,6 @@ if (!DEBUG) {
   commonConfig = merge(commonConfig, {
     plugins: [
       new ExtractTextPlugin('styles.css')
-    ]
-  })
-} else {
-  commonConfig = merge(commonConfig, {
-    plugins: [
-      new webpack.HotModuleReplacementPlugin()
     ]
   })
 }

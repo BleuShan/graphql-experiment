@@ -5,5 +5,10 @@ import main from './main'
 const drivers = {
   HTTP: makeHttpServerDriver()
 }
+const dispose = run(main, drivers)
 
-run(main, drivers)
+process.on('SIGTERM', () => {
+  dispose()
+}).on('SIGINT', () => {
+  dispose()
+})

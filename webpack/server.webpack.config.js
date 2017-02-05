@@ -14,11 +14,12 @@ fs.readdirSync('node_modules').filter((x) => {
 const config = {
   entry: {
     app: [
+      resolveSourceDir('polyfills.js'),
       resolveSourceDir('server', 'index.js')
     ]
   },
   output: {
-    filename: DEBUG ? '[name].server.bundle.js' : '[name]-[hash].server.bundle.js',
+    filename: DEBUG ? '[name].server.js' : '[name]-[hash].server.js',
     chunkFilename: DEBUG ? '[id].server.chunk.js' : '[id]-[hash].server.chunk.js'
   },
   externals,
@@ -32,13 +33,4 @@ const config = {
   }
 }
 
-module.exports = DEBUG ? merge({
-  entry: {
-    common: [
-      'webpack/hot/signal'
-    ],
-    app: [
-      'webpack/hot/signal'
-    ]
-  }
-}, commonConfig, config) : merge(commonConfig, config)
+module.exports = merge(commonConfig, config)

@@ -1,4 +1,4 @@
-export function Main ({HTTP}) {
+export default function Main ({HTTP}) {
   return {
     HTTP: HTTP.map((request) => {
       return {
@@ -7,5 +7,3 @@ export function Main ({HTTP}) {
     })
   }
 }
-
-export default Main

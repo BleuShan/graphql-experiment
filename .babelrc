@@ -16,11 +16,10 @@
   "env": {
     "development": {
       "plugins": [
-        ["cycle-hmr", {
+        ["cycle-hmr/most", {
           "include": "src/client/**"
         }]
       ]
     }
-  },
-  "sourceMaps": "inline"
+  }
 }
