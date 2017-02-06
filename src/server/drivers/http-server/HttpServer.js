@@ -1,9 +1,10 @@
 import EventEmitter from 'events'
 import Koa from 'koa'
+import mount from 'koa-mount'
 
 const DEFAULT_OPTIONS = {port: process.env.PORT || 4000, hostname: 'localhost', logger: console}
 
-export default class HttpServer extends EventEmitter {
+class HttpServer extends EventEmitter {
   _sockets = new Set()
 
   constructor (options = {}) {
@@ -11,9 +12,7 @@ export default class HttpServer extends EventEmitter {
     this._options = {...DEFAULT_OPTIONS, ...options}
   }
 
-  static create (options) {
-    return new HttpServer(options)
-  }
+  static create = createServer
 
   get app () {
     if (!this._app) {
@@ -27,13 +26,17 @@ export default class HttpServer extends EventEmitter {
     return this._options.logger
   }
 
+  get isActive () {
+    return !!this._httpServer
+  }
+
   get options () {
     return this._options
   }
 
   listen () {
     if (!this._httpServer) {
-      const {port, hostname} = this.options
+      const {port, hostname, middleware} = this.options
       this._httpServer = this.app.listen(port, hostname, () => {
         const {address} = this._httpServer.address()
         this.logger.info(`Server ${process.pid} started on ${address}:${port}`)
@@ -48,47 +51,75 @@ export default class HttpServer extends EventEmitter {
         })
       })
 
-      process.on('SIGTERM', () => {
-        this.close()
-      }).on('SIGINT', () => {
-        this.close()
-      })
+      if (middleware) {
+        middleware.forEach(item => {
+          if (Reflect.has(item, 'path') && Reflect.has(item, 'handler')) {
+            this.mount(item.path, item.handler)
+          } else {
+            this.mount(item)
+          }
+        })
+      }
+
+      process.on('SIGTERM', () => this.close())
+             .on('SIGINT', () => this.close())
+             .on('uncaughtException', (error) => {
+               this.logger.error(error)
+               this.shutdown()
+             })
     }
 
     return this
   }
 
+  shutdown () {
+    this._sockets.forEach((socket) => {
+      socket.end()
+
+      if (!socket.destroyed) {
+        socket.destroy()
+      }
+    })
+
+    this._sockets.clear()
+
+    this._httpServer.close(() => {
+      this.emit('close')
+      if (this.closing) {
+        clearTimeout(this.closing)
+        this.closing = undefined
+      }
+
+      this.logger.info(`Server ${process.pid} has terminated`)
+      process.exit(0)
+    })
+  }
+
   close () {
+    if (!this.isActive) {
+      return this
+    }
+
     if (this.closing) {
       this.logger.error(`Server ${process.pid} is already shutting down`)
       return
     }
 
-    if (!this._httpServer) {
+    this.logger.info(`Server ${process.pid} is shutting down`)
+
+    this.closing = setTimeout(() => {
+      this.shutdown()
+    })
+  }
+
+  mount (pathOrHandler, handler) {
+    if (!handler) {
+      this.app.use(mount(pathOrHandler))
       return this
     }
 
-    this.logger.info(`Server ${process.pid} is shutting down`)
-    this.emit('close')
-
-    this.closing = setTimeout(() => {
-      this._sockets.forEach((socket) => {
-        socket.end()
-
-        if (!socket.destroyed) {
-          socket.destroy()
-        }
-      })
-
-      this._sockets.clear()
-
-      this._httpServer.close(() => {
-        this.emit('close')
-        clearTimeout(this.closing)
-        this.closing = undefined
-        process.exit(0)
-      })
-    })
+    this.app.use(mount(pathOrHandler, handler))
+    return this
   }
 
   use (middleware) {
@@ -96,3 +127,9 @@ export default class HttpServer extends EventEmitter {
     return this
   }
 }
+
+export function createServer (options) {
+  return new HttpServer(options)
+}
+
+export default HttpServer
